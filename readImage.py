@@ -88,6 +88,10 @@ if __name__ == "__main__":
         r"c:\Users\allis\AppData\Local\Programs\Tesseract-OCR\tesseract.exe"
     )
 
-    # draw_on_image()
+    draw_on_image()
+    # look at the screenshot_with_draw image we've created, we need a way to intnelligently stitch
+    # these bounded boxes together and pass them through the OCR instead, of just individual screenshots.
+    # you have to also somehow do this with time as well, as you want the text to have an order, but first
+    # just start off overall.
 
     # read_image()
