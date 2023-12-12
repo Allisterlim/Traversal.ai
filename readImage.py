@@ -73,8 +73,8 @@ def read_image():
             (start_x, start_y, start_x + crop_width, start_y + crop_height)
         )
 
-        # save image
-        # cropped_image.save(f"cropped_image_{timestep}.jpg")
+        # save image - change this to save it into a folder
+        cropped_image.save(f"cropped_images/cropped_image_{timestep}.jpg")
 
         crop_text = pytesseract.image_to_string(cropped_image)
 
@@ -88,9 +88,6 @@ if __name__ == "__main__":
         r"c:\Users\allis\AppData\Local\Programs\Tesseract-OCR\tesseract.exe"
     )
 
-    draw_on_image()
+    # draw_on_image()
 
     # read_image()
-
-    # draw these cropped images to visualize and adjust how big your OCR boxes should be
-    # you might be unnecessarily converting to numpy arrays and then back to images.
