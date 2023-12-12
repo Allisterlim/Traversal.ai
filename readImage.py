@@ -3,21 +3,45 @@ import pytesseract
 import numpy as np
 import matplotlib.pyplot as plt
 import json
+import matplotlib.patches as patches
 
 
 def draw_on_image():
+    # img = plt.imread("screenshot_0.jpg")
+    # fig, ax = plt.subplots()
+
+    # with open("screenshot_0.json") as f:
+    #     screenshot_data = json.load(f)
+    #     print(screenshot_data)
+
+    # ax.imshow(img)
+    # x = screenshot_data["gaze_x"]
+    # y = screenshot_data["gaze_y"]
+
+    # ax.scatter(x, y)
+    # plt.savefig("screenshot_with_draw_0")
+    # # plt.show()
+
+    # gpt code
     img = plt.imread("screenshot_0.jpg")
     fig, ax = plt.subplots()
 
     with open("screenshot_0.json") as f:
         screenshot_data = json.load(f)
-        print(screenshot_data)
 
     ax.imshow(img)
+
     x = screenshot_data["gaze_x"]
     y = screenshot_data["gaze_y"]
 
-    ax.scatter(x, y)
+    # Assuming each point in x and y is a center of a square
+    for xi, yi in zip(x, y):
+        # Create a square as a rectangle, adjust the conversion from pixels to data coordinates as needed
+        square = patches.Rectangle(
+            (xi - 150, yi - 150), 300, 300, linewidth=1, edgecolor="r", facecolor="none"
+        )
+        ax.add_patch(square)
+
     plt.savefig("screenshot_with_draw_0")
     # plt.show()
 
@@ -31,7 +55,7 @@ def read_image():
 
     # write code to draw a box at the different points, this is where you're going to OCR.
     # define width and height of this box
-    crop_width, crop_height = 300, 200
+    crop_width, crop_height = 300, 300
 
     timesteps = screenshot_data["time"]
 
@@ -64,9 +88,9 @@ if __name__ == "__main__":
         r"c:\Users\allis\AppData\Local\Programs\Tesseract-OCR\tesseract.exe"
     )
 
-    # draw_on_image()
+    draw_on_image()
 
-    read_image()
+    # read_image()
 
-    # draw this to visualize and adjust how big your OCR boxes should be
+    # draw these cropped images to visualize and adjust how big your OCR boxes should be
     # you might be unnecessarily converting to numpy arrays and then back to images.
