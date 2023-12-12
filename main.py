@@ -3,44 +3,57 @@ import pyautogui
 import websockets
 import json
 import time
+import numpy as np
+
 
 async def receive_data(websocket):
     # create json
     first = True
     counter = 0
     try:
+        screenshot = pyautogui.screenshot()
+        save_path = "screenshot_" + f"{counter}" + ".jpg"
+        screenshot.save(save_path)
+
+        screenshot_data = {}
+        save_filename = "screenshot_" + f"{counter}" + ".json"
+        screenshot_data["save_path"] = save_path
+        counter += 1
+
+        screenshot_data["gaze_x"] = []
+        screenshot_data["gaze_y"] = []
+        screenshot_data["time"] = []
+
+        # initialize time counter
+        timeStep = 0
+
         while True:
-            save_data = {}
-            save_filename = "screenshot_" + f"{counter}" + ".json"
-            data = await websocket.recv()
+            gaze_data = await websocket.recv()
+
+            # because first data point is invalid (some random string data)
             if first:
                 first = False
+
             else:
-                # print(data)
-                json_data = json.loads(data)
+                # data = gaze
+                json_data = json.loads(gaze_data)
                 gaze_x = json_data["GazeX"]
                 gaze_y = json_data["GazeY"]
-                screenshot = pyautogui.screenshot(
-                    region=(gaze_x, gaze_y, 800, 200)
-                )
 
-                save_path = "screenshot_" + f"{counter}" + ".jpg"
-                counter += 1
-                screenshot.save(save_path)
+                # add x, y data
+                screenshot_data["gaze_x"].append(gaze_x)
+                screenshot_data["gaze_y"].append(gaze_y)
 
-                save_data['gaze_x'] = gaze_x
-                save_data['gaze_y'] = gaze_y
-                save_data['save_path'] = save_path
+                # add time data
+                screenshot_data["time"].append(timeStep)
+                timeStep += 1
 
-                json.dump(save_data, open(save_filename, 'w'))
-
-                #screenshot_x, screenshot_y = json_data["GazeX"], json_data["GazeY"]
-                # use these x,y's to determine next screenshot
+                json.dump(screenshot_data, open(save_filename, "w"))
 
                 # exit()
-                time.sleep(3)
+                time.sleep(1)
 
-            print(f"Received data: {data}")
+                print(f"Received data: {json_data}")
     except websockets.ConnectionClosed as e:
         print(f"Connection closed unexpectedly: {e}")
     finally:
