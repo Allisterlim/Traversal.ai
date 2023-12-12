@@ -25,7 +25,7 @@ y = screenshot_data["gaze_y"]
 ax.scatter(x, y)
 plt.savefig("screenshot_with_draw_0")
 
-plt.show()
+# plt.show()
 
 # write code to draw a box at the different points, this is where you're going to OCR.
 # define width and height of this box
@@ -35,13 +35,20 @@ timesteps = screenshot_data["time"]
 
 # at each time step, crop the image at the x,y coordinates and save
 for timestep in timesteps:
-    image_x = screenshot_data["x"][timestep]
-    image_y = screenshot_data["y"][timestep]
+    image_x = screenshot_data["gaze_x"][timestep]
+    image_y = screenshot_data["gaze_y"][timestep]
 
-    cropped_image = Image.crop(
-        image_x, image_y, image_x + crop_width, image_y + crop_height
-    )
-    cropped_image.save(f"cropped_image{timestep}")
+    # Calculate the top-left corner coordinates
+    start_x = image_x - crop_width // 2
+    start_y = image_y - crop_height // 2
+
+    cropped_image = img[start_y : start_y + crop_height, start_x : start_x + crop_width]
+
+    # Convert the cropped image to a PIL Image
+    cropped_image_pil = Image.fromarray(cropped_image)
+
+    # Save the cropped image
+    cropped_image_pil.save(f"cropped_image_{timestep}.jpg")
 
     crop_text = pytesseract.image_to_string(cropped_image)
 
@@ -50,5 +57,4 @@ for timestep in timesteps:
 
 
 # draw this to visualize and adjust how big your OCR boxes should be
-
-# OCR for image to text
+# you might be unnecessarily converting to numpy arrays and then back to images.
