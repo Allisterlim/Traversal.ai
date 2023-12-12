@@ -20,8 +20,13 @@ ax.imshow(img)
 x = screenshot_data["gaze_x"]
 y = screenshot_data["gaze_y"]
 
-ax.plot(x, y)
+ax.scatter(x, y)
+plt.savefig("screenshot_with_draw_0")
+
 plt.show()
+
+# write code to draw a box at the different points, this is where you're going to OCR.
+# draw this to visualize and adjust how big your OCR boxes should be
 
 # OCR for image to text
 # print(pytesseract.image_to_string(image))
